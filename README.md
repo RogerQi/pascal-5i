@@ -33,6 +33,7 @@ python3 main.py --base_dir /home/some_user/data
 
 An example hierarchy of base dir is given here
 
+```
 .
 +-- /home/some_user/data
 |   +-- sbd
@@ -42,7 +43,7 @@ An example hierarchy of base dir is given here
 |   +-- VOCdevkit
 |       +-- VOC2012 (extracted from [this zip](http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar))
 |           ...
-
+```
 
 
 ## Caveats
