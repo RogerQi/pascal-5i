@@ -1,0 +1,7 @@
+torch==1.8.0+cu111
+torchvision==0.9.0+cu111
+scipy==1.5.4
+numpy==1.17.4
+Pillow==8.2.0
+tqdm==4.55.0
+matplotlib==3.2.2
