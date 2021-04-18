@@ -1,4 +1,4 @@
-# pascal-5i
+# A PyTorch Pascal-5i dataset reader
 A working Python implementation to construct pascal-5i dataset.
 
 PASCAL-5i is a dataset frequently used in few-shot segmentation literatures.
@@ -16,11 +16,10 @@ done in the dataset initialization stage. Hence, it poses no overhead during tra
 
 ## Usage
 
-By default, you can run data reading example at,
-```
-python3 main.py
-```
+**Check out the usage examples in examples.ipynb!**
 
+If you want to download the dataset to `/data`, you can run the ipython notebook
+and change `download=False` to `download=True`.
 The [SBD Dataset](http://home.bharathh.info/pubs/codes/SBD/download.html) and the
 [Pascal VOC2012 Dataset](http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/) will
 be automatically downloaded to /data/sbd and /data/VOCdevkit using torchvision utility functions.
@@ -54,3 +53,8 @@ An example hierarchy of base dir is given here
     and the Pascal VOC2012 dataset. Then, it isolates all images in the VOC2012 validation set
     as the validation set for Pascal 5i; while the rest of the images (including images
     from the SBD validation set) are considered as training set.
+- As discussed in OSLSM, some of the examples in D_{train} contains pixels whose labels are
+    in L_{test}. To prevent information leaking, these pixels are masked as background pixels.
+    This creates a `gap' between L_{train} and D_{train}. (e.g., images who contain labels
+    0, 1, 2, ..., 10, 16, 17, ..., 20). To address these missing channels, we offset the labels
+    so that the labels 16, ..., 20 are mapped to 11, ..., 15.
