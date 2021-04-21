@@ -94,9 +94,13 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
         folded_images = []
         folded_targets = []
 
+        # Given a class, this dict returns list of images containing the class
         self.class_img_map = {}
         for label_id, _ in enumerate(self.label_set):
             self.class_img_map[label_id + 1] = []
+
+        # Given an index of an image, this dict returns list of classes in the image
+        self.img_class_map = {}
 
         for i in range(len(self.images)):
             mask = self.load_seg_mask(self.targets[i])
@@ -108,9 +112,14 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
                         folded_images.append(self.images[i])
                         folded_targets.append(self.targets[i])
                         appended_flag = True
+                    cur_img_id = len(folded_images) - 1
+                    cur_class_id = label_id + 1
                     # This image must be the latest appended image
-                    self.class_img_map[label_id +
-                                       1].append(len(folded_images) - 1)
+                    self.class_img_map[cur_class_id].append(cur_img_id)
+                    if cur_img_id in self.img_class_map:
+                        self.img_class_map[cur_img_id].append(cur_class_id)
+                    else:
+                        self.img_class_map[cur_img_id] = [cur_class_id]
 
         self.images = folded_images
         self.targets = folded_targets
@@ -178,6 +187,19 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
             - a list of all images in the dataset containing at least one pixel of the class
         """
         return self.class_img_map[class_id]
+
+    def get_class_in_an_image(self, img_idx):
+        """
+        Given an image idx (e.g., 123), return the list of classes in
+        the image.
+
+        Parameters:
+            - img_idx: an integer representing image
+
+        Return:
+            - list of classes in the image
+        """
+        return self.img_class_map[img_idx]
 
     def __getitem__(self, idx):
         # For both SBD and VOC2012, images are stored as .jpg
