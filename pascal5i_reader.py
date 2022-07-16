@@ -102,10 +102,13 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
         # Given an index of an image, this dict returns list of classes in the image
         self.img_class_map = {}
         
-        if os.path.exists("dataset_icm.pt") and os.path.exists("dataset_cim.pt"):
+        if os.path.exists("dataset.pt"):
 			print('Using Saved Dataset')
-			self.img_class_map = torch.load("dataset_icm.pt")
-			self.class_img_map = torch.load("dataset_cim.pt")
+			d = torch.load("dataset.pt")
+			self.img_class_map = d['icm'] 
+			self.class_img_map = d['cim']
+			folded_images = d['fi']
+			folded_targets = d['ft']
 		else:
 			print('Creating Dataset')
 			for i in tqdm(range(len(self.images))):
@@ -126,8 +129,12 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
 							self.img_class_map[cur_img_id].append(cur_class_id)
 						else:
 							self.img_class_map[cur_img_id] = [cur_class_id]
-			torch.save(self.img_class_map, "dataset_icm.pt")
-			torch.save(self.class_img_map, "dataset_cim.pt")
+			torch.save({
+				'icm':self.img_class_map, 
+				'cim':self.class_img_map,
+				'fi': folded_images,
+				'ft': folded_targets
+			}, "dataset.pt")
 
         self.images = folded_images
         self.targets = folded_targets
