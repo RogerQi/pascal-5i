@@ -101,25 +101,33 @@ class Pascal5iReader(torchvision.datasets.vision.VisionDataset):
 
         # Given an index of an image, this dict returns list of classes in the image
         self.img_class_map = {}
-
-        for i in range(len(self.images)):
-            mask = self.load_seg_mask(self.targets[i])
-            appended_flag = False
-            for label_id, x in enumerate(self.label_set):
-                if x in mask:
-                    if not appended_flag:
-                        # contain at least one pixel in L_{train}
-                        folded_images.append(self.images[i])
-                        folded_targets.append(self.targets[i])
-                        appended_flag = True
-                    cur_img_id = len(folded_images) - 1
-                    cur_class_id = label_id + 1
-                    # This image must be the latest appended image
-                    self.class_img_map[cur_class_id].append(cur_img_id)
-                    if cur_img_id in self.img_class_map:
-                        self.img_class_map[cur_img_id].append(cur_class_id)
-                    else:
-                        self.img_class_map[cur_img_id] = [cur_class_id]
+        
+        if os.path.exists("dataset_icm.pt") and os.path.exists("dataset_cim.pt"):
+			print('Using Saved Dataset')
+			self.img_class_map = torch.load("dataset_icm.pt")
+			self.class_img_map = torch.load("dataset_cim.pt")
+		else:
+			print('Creating Dataset')
+			for i in tqdm(range(len(self.images))):
+				mask = self.load_seg_mask(self.targets[i])
+				appended_flag = False
+				for label_id, x in enumerate(self.label_set):
+					if x in mask:
+						if not appended_flag:
+							# contain at least one pixel in L_{train}
+							folded_images.append(self.images[i])
+							folded_targets.append(self.targets[i])
+							appended_flag = True
+						cur_img_id = len(folded_images) - 1
+						cur_class_id = label_id + 1
+						# This image must be the latest appended image
+						self.class_img_map[cur_class_id].append(cur_img_id)
+						if cur_img_id in self.img_class_map:
+							self.img_class_map[cur_img_id].append(cur_class_id)
+						else:
+							self.img_class_map[cur_img_id] = [cur_class_id]
+			torch.save(self.img_class_map, "dataset_icm.pt")
+			torch.save(self.class_img_map, "dataset_cim.pt")
 
         self.images = folded_images
         self.targets = folded_targets
