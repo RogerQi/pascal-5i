@@ -24,11 +24,7 @@ The [SBD Dataset](http://home.bharathh.info/pubs/codes/SBD/download.html) and th
 [Pascal VOC2012 Dataset](http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2012/) will
 be automatically downloaded to /data/sbd and /data/VOCdevkit using torchvision utility functions.
 
-If you have downloaded the SBD dataset and the pascal VOC2012 dataset, you can specify
-
-```
-python3 main.py --base_dir /home/some_user/data
-```
+If you have downloaded the SBD dataset and the pascal VOC2012 dataset, you can specify them as base dir to the data loader.
 
 An example hierarchy of base dir is given here
 
